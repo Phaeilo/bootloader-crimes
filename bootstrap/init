@@ -1,0 +1,53 @@
+#!/bin/busybox sh
+
+# busybox setup
+/bin/busybox mkdir -p /bin /sbin /usr/bin /usr/sbin
+/bin/busybox --install -s
+export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin"
+
+# setup "special" directories
+mkdir -p /proc /sys /tmp /run
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t tmpfs tmpfs /tmp
+mount -t tmpfs run /run
+
+# load drivers
+find /lib/modules -name 'ko_*' | sort | xargs -n 1 insmod
+
+# setup /dev
+mdev -s
+echo "hello from init" > /dev/kmsg
+
+# setup networking
+hostname localhost
+ip link set lo up
+ip link set eth0 up
+udhcpc -i eth0 -f -q
+
+# setup autologin
+mkdir -p /etc /root
+touch /etc/inittab
+echo tty1::respawn:/sbin/getty -n -l /bin/autologin 0 tty1 linux >> /etc/inittab
+#echo ttyS0::respawn:/sbin/getty -l /bin/autologin -n 115200 ttyS0 linux >> /etc/inittab
+echo ttyS0::respawn:/sbin/getty -n 115200 ttyS0 linux >> /etc/inittab
+
+cat <<EOF > /bin/autologin
+#!/bin/sh
+exec /bin/login -f root
+EOF
+chmod +x /bin/autologin
+
+echo root::0:0:root:/root:/bin/sh > /etc/passwd
+echo '[ -e /mnt/bootstrap/bootstrap.sh ] && sh /mnt/bootstrap/bootstrap.sh' > /etc/profile
+
+# mount partitions
+mkdir -p /mnt/bootstrap /mnt/scratch
+mount /dev/sda1 /mnt/bootstrap
+mount /dev/sda2 /mnt/scratch
+
+# decrease kernel log verbosity
+echo 5 > /proc/sys/kernel/printk
+
+# run busybox init, triggering autologin and bootstrap process
+exec /bin/busybox init
