@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 IMAGE_SIZE_G=100
 BOOTSTRAP_SIZE_G=2
