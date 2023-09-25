@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 IMAGE_SIZE_G=100
 BOOTSTRAP_SIZE_G=2
@@ -128,8 +128,17 @@ cp "${ROOTFS_DIR}/usr/share/syslinux/mbr.bin" "${FS_DIR}/syslinux/"
 # TODO can't use these as they might not be compatible with the host's guestfish installing syslinux
 #cp ./root3/usr/share/syslinux/linux.c32 .
 #cp ./root3/usr/share/syslinux/libcom32.c32 .
-cp /usr/lib/syslinux/bios/linux.c32 "${FS_DIR}/syslinux/"
-cp /usr/lib/syslinux/bios/libcom32.c32 "${FS_DIR}/syslinux/"
+if test -d /usr/lib/syslinux/modules/bios/; then
+    SYSLINUXDIR=/usr/lib/syslinux/modules/bios/
+elif test -d /usr/lib/syslinux/bios/; then
+    SYSLINUXDIR=/usr/lib/syslinux/bios/
+else
+    echo "WARNING! syslinux dir not detected, assuming /usr/lib/syslinux/bios/"
+    SYSLINUXDIR=/usr/lib/syslinux/bios/
+fi
+
+cp "$SYSLINUXDIR/linux.c32" "${FS_DIR}/syslinux/"
+cp "$SYSLINUXDIR/libcom32.c32" "${FS_DIR}/syslinux/"
 
 cat <<EOF > "${FS_DIR}/syslinux/syslinux.cfg"
 DEFAULT linux
