@@ -95,6 +95,7 @@ mkdir -p "${INITRD_DIR}"
 
 ./lib/modules/*/kernel/net/packet/af_packet.ko.gz
 ./lib/modules/*/kernel/drivers/net/ethernet/intel/e1000/e1000.ko.gz
+./lib/modules/*/kernel/drivers/net/ethernet/intel/e1000e/e1000e.ko.gz
 EOF
 
 # install init script
