@@ -57,7 +57,8 @@ chk_fail $?
 
 
 announce "Downloading ISO"
-curl -L "$ISO_URL" --output /mnt/scratch/win.iso
+# Retry up to 10 times. -C - makes downloads resume where they stopped upon retry.
+curl -L "$ISO_URL" --output /mnt/scratch/win.iso --retry 10 -C -
 chk_fail $?
 
 announce "Verifying ISO"
