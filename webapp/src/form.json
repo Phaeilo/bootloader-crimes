@@ -32,7 +32,7 @@
         {
           "name": "iso_hash",
           "label": "ISO SHA256",
-          "default": "ebbc79106715f44f5020f77bd90721b17c5a877cbc15a3535b99155493a1bb3f"
+          "default": "c8dbc96b61d04c8b01faf6ce0794fdf33965c7b350eaa3eb1e6697019902945c"
         },
         {
           "name": "iso_wim_index",
