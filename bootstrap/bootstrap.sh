@@ -61,7 +61,7 @@ curl -L "$ISO_URL" --output /mnt/scratch/win.iso
 chk_fail $?
 
 announce "Verifying ISO"
-echo "$ISO_HASH  /mnt/scratch/win.iso" | sha256sum -c -
+echo "$ISO_HASH" | awk '{print tolower($0)}' | xargs -I{} echo "{}  /mnt/scratch/win.iso" | sha256sum -c -
 chk_fail $?
 
 announce "Mounting ISO"
